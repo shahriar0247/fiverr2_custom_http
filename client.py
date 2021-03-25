@@ -3,14 +3,9 @@ import sys
 import time
 import os
 import random
+from find_img import get_img_src, download_imgs
+from socket_stuff import createSocket
 
-def createSocket():
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("Socket successfully created")
-    except socket.error as err:
-        print("socket creation failed with error %s" % (err))
-    return s
 
 
 def parseInput(request):
@@ -65,17 +60,15 @@ def getRequest(host_ip, port, url):
         
     total = total + recieved
     head, html = find_body(total.decode("utf-8"))
-    filename = create_filename(url)
-    with open(filename, "w", encoding="utf-8") as f:
+    foldername = create_filename(url)
+    os.mkdir(foldername)
+    with open(os.path.join(foldername, "index.html"), "w", encoding="utf-8") as f:
         f.write(html)
-    
-    print("Saved html in %s" % filename)
+    all_img_src = get_img_src(html)
+    download_imgs(url, all_img_src, port, foldername)
 
-def get_images_url():
-    import re                       # use regexp
-    r = re.compile("<img.>") # constructs the search machinery
-    res = r.search(original_string) # search
-    print (res.group(0))      
+
+
 
 def find_body(total):
     split_text = ["<!doctype", "<!DOCTYPE", "<html","<HTML"]
@@ -95,7 +88,7 @@ def create_filename(params):
     filename = os.path.join(location, params)
     while os.path.exists(filename) == True:
         filename = filename + " " + str(random.randint(0,100))
-    return filename + ".html"
+    return filename
 
 #this is wrong not http protocol
 def postRequest():
