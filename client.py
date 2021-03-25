@@ -9,9 +9,6 @@ from socket_stuff import createSocket
 
 
 def parseInput(request):
-
-    
-
     if request[0] == DISCONNECTMSG:
         s.close()
         return
@@ -22,7 +19,7 @@ def parseInput(request):
         # this means could not resolve the host
         print("there was an error resolving the host")
         sys.exit()
-    print(len(request))
+
 
     try:
         port = request[2]
@@ -31,11 +28,13 @@ def parseInput(request):
     url = request[1]
     if request[0] == 'GET':
         getRequest(host_ip, port, url)
+    
+    if request[0] == 'HEAD':
+        headRequest(host_ip, port, url)
 
     if request[0] == 'POST':
         postRequest()
-
-#this is wrong, not http protocol
+    
 def getRequest(host_ip, port, url):
     address = (host_ip, int(port))
     s.connect(address)
@@ -54,7 +53,7 @@ def getRequest(host_ip, port, url):
     recieved = s.recv(buffer)
     total = b''
     while "</html>" not in (recieved).decode("utf-8")[-20:]:
-        print(len(recieved))
+
         total = total + recieved
         recieved = s.recv(buffer)
         
@@ -73,6 +72,24 @@ def getRequest(host_ip, port, url):
     with open(os.path.join(foldername, "index.html"), "w", encoding="utf-8") as f:
         f.write(html)
     
+
+
+
+def headRequest(host_ip, port, url):
+    address = (host_ip, int(port))
+    s.connect(address)
+    request = b"HEAD / HTTP/1.1\nHost: "+ url.encode('utf-8') + b"\n\n"
+    s.send(request)
+    buffer = 512
+    recieved = s.recv(buffer)
+    total = b''
+    while "\r\n\r\n" not in (recieved).decode("utf-8")[-10:]:
+       
+        total = total + recieved
+        recieved = s.recv(buffer)
+        
+    total = total + recieved
+    print(total.decode("utf-8"))
 
 
 
