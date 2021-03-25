@@ -10,8 +10,9 @@ def get_img_src(html):
         img_src_loc = one_img.find("src")
         first_quote = one_img[img_src_loc:-1].find("\"")
         last_quote = one_img[img_src_loc:-1][first_quote+1:-1].find("\"")
-        img_src = one_img[img_src_loc:-1][first_quote+1:last_quote+first_quote+1] 
-        all_img_srcs.append(img_src)
+        img_src = one_img[img_src_loc:-1][first_quote+1:last_quote+first_quote+1]
+        if img_src != "":
+            all_img_srcs.append(img_src)
     return all_img_srcs
 
 
@@ -25,6 +26,7 @@ def create_img_filename(foldername):
 
 
 def download_imgs(url, img_list, port, foldername):
+    new_img_loc = []
     for img in img_list:
         if img == '':
             pass
@@ -53,3 +55,5 @@ def download_imgs(url, img_list, port, foldername):
             filename = create_img_filename(foldername)
             with open(filename, "wb") as f:
                 f.write(total)
+            new_img_loc.append(filename)
+    return new_img_loc

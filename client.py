@@ -62,10 +62,17 @@ def getRequest(host_ip, port, url):
     head, html = find_body(total.decode("utf-8"))
     foldername = create_filename(url)
     os.mkdir(foldername)
+    
+    all_img_src = get_img_src(html)
+    new_img_loc = download_imgs(url, all_img_src, port, foldername)
+
+    for one_src in all_img_src:
+        html = html.replace(one_src, new_img_loc[all_img_src.index(one_src)].split("\\")[-1])
+        
+
     with open(os.path.join(foldername, "index.html"), "w", encoding="utf-8") as f:
         f.write(html)
-    all_img_src = get_img_src(html)
-    download_imgs(url, all_img_src, port, foldername)
+    
 
 
 
