@@ -18,7 +18,7 @@ def get_img_src(html):
 
 def create_img_filename(foldername):
     if not os.path.exists(foldername):
-        os.mkdir(location) 
+        os.mkdir(foldername) 
     filename = os.path.join(foldername, "img " + str(random.randint(0,100)) + ".jpg")
     if os.path.exists(filename) == True:
         return create_img_filename(foldername)

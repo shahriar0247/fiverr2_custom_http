@@ -52,13 +52,14 @@ def getRequest(host_ip, port, url):
     buffer = 512
     recieved = s.recv(buffer)
     total = b''
-    while "</html>" not in (recieved).decode("utf-8")[-20:]:
+    while b"</html>" not in (recieved):
 
         total = total + recieved
         recieved = s.recv(buffer)
         
     total = total + recieved
-    head, html = find_body(total.decode("utf-8"))
+    head, html = find_body(total.decode('unicode_escape'))
+    print(head)
     foldername = create_filename(url)
     os.mkdir(foldername)
     
@@ -95,6 +96,7 @@ def headRequest(host_ip, port, url):
 
 
 def find_body(total):
+
     split_text = ["<!doctype", "<!DOCTYPE", "<html","<HTML"]
     for a in split_text:
         try:
@@ -128,7 +130,7 @@ if __name__ == '__main__':
     HEADER = 64
     SERVER = socket.gethostbyname(socket.gethostname())
     DISCONNECTMSG = 'DISCONNECT!'
-    arguments = sys.argv[1], sys.argv[2] ,sys.argv[3]
+    arguments = sys.argv[1], sys.argv[2], sys.argv[3] #input('enter url').split(' ') #
     # while True:
         # request = input("HttpCommand URI Port: ")
     parseInput(arguments)
